@@ -1,5 +1,3 @@
-require 'yaml'
-
 class Path
 	attr_reader :distance, :between
 	
@@ -27,7 +25,6 @@ class Map
 	
 	def add_path(from,to,distance)
 		from = node(from)
-		from.class
 		to = node(to)
 		path = Path.new(from,to,distance)
 		@paths << path
@@ -54,14 +51,17 @@ map.add_path('London', 'Dublin', 464)
 map.add_path('London', 'Belfast', 518)
 map.add_path('Dublin', 'Belfast', 141)
 
+distances = []
+
 map.nodes.permutation.map do |route|
-	puts route.map{|node| node.name}.join('->')
 	prev = nil
 	total = 0
 	route.each do |node|
 		total += map.get_distance(prev,node) unless prev.nil?
 		prev = node
 	end
-	puts total
-	puts
+	route = route.map{|node| node.name}.join('->')
+	distances << [route,total]
 end
+
+puts distances.min{|a,b| a[1] <=> b[1]}.inspect

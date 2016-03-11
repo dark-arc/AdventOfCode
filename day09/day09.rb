@@ -1,55 +1,10 @@
-class Path
-	attr_reader :distance, :between
-	
-	def initialize(from,to,distance=nil)
-		@between = [from,to].sort{|a,b| a.name <=> b.name}
-		@distance = distance
-	end
-end
-
-class Node
-	attr_reader :name
-	
-	def initialize(name)
-		@name = name
-	end
-end
-
-class Map
-	attr_accessor :nodes, :paths
-	
-	def initialize
-		@nodes = []
-		@paths = []
-	end
-	
-	def add_path(from,to,distance)
-		from = node(from)
-		to = node(to)
-		path = Path.new(from,to,distance)
-		@paths << path
-	end
-	
-	def node(name)
-		ret = @nodes.select{|n| n.name == name}.first
-		return ret unless ret.nil?
-		ret = Node.new(name)
-		nodes << ret
-		return ret unless ret.nil?
-	end
-	
-	def get_distance(start,finish)
-		path = Path.new(start,finish)
-		path = @paths.select{|p| p.between == path.between}.first
-		return path.distance
-	end
-end
+require_relative 'map'
+require_relative 'mapCodeParser'
+$input = File.open('day09.in').read
 
 map = Map.new
-
-map.add_path('London', 'Dublin', 464)
-map.add_path('London', 'Belfast', 518)
-map.add_path('Dublin', 'Belfast', 141)
+scanner = MapCodeParser.new $input, map
+scanner.run
 
 distances = []
 
@@ -64,4 +19,7 @@ map.nodes.permutation.map do |route|
 	distances << [route,total]
 end
 
+# Part 1
 puts distances.min{|a,b| a[1] <=> b[1]}.inspect
+# Part 2
+puts distances.max{|a,b| a[1] <=> b[1]}.inspect

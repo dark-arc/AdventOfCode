@@ -9,9 +9,9 @@ input.split('').each do |inst|
 end
 visits = Hash.new(0)
 @santa.path.each do |coord|
-  visits[coord] +=1
+  visits[coord] += 1
 end
-puts visits.reduce(0){|ttl,val| ttl+=1 if val.last > 0}
+puts visits.reduce(0) { |ttl, val| ttl += 1 if val.last > 0 }
 
 # Part 2.
 @santa = Santa.new
@@ -28,11 +28,9 @@ input.split('').each do |inst|
 end
 visits = Hash.new(0)
 @santa.path.each do |coord|
-  visits[coord] +=1
+  visits[coord] += 1
 end
 @robo.path.each do |coord|
-  visits[coord] +=1
+  visits[coord] += 1
 end
-puts visits.reduce(0){|ttl,val| ttl+=1 if val.last > 0}
-
-
+puts visits.reduce(0) { |ttl, val| ttl += 1 if val.last > 0 }

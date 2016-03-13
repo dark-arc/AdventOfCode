@@ -5,7 +5,6 @@ RGX_INST =
   /(?<instruction>.*) (?<x1>\d+),(?<y1>\d+) through (?<x2>\d+),(?<y2>\d+)/
 # Pre-code
 
-
 # Part 1.
 board = Matrix.new
 
@@ -47,7 +46,7 @@ $input.each_line do |instruction|
   when 'turn on'
     board.inc(coords)
   when 'toggle'
-    board.inc(coords,2)
+    board.inc(coords, 2)
   end
 end
 

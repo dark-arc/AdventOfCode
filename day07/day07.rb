@@ -13,14 +13,14 @@ class LogicGateParser
 
   def initialize(prog)
     @prog = prog
-    @registers = Hash.new()
-	@stuck = Array.new()
-	@opcodes = Array.new()
+    @registers = {}
+    @stuck = []
+    @opcodes = []
   end
 
   def run
     parse
-    @registers.sort_by{|k,v| k}
+    @registers.sort_by { |k, _v| k }
   end
 
   def parse
@@ -30,8 +30,8 @@ class LogicGateParser
       if @buffer.match? /.*->.*$/
         position = @buffer.pos
         skip = true
-        catch :do_later do 
-          result = get_result          
+        catch :do_later do
+          result = get_result
           @buffer.skip_until(/->/)
           set_register(result)
           skip = false
@@ -48,39 +48,39 @@ class LogicGateParser
   end
 
   def get_operation
-    return get_value, get_command, get_value
+    [get_value, get_command, get_value]
   end
-  
-  def get_result
-    left,cmd,right = get_operation
 
-    if ['AND', 'OR', 'LSHIFT', 'RSHIFT'].include?(cmd)      
-      if left.nil? or right.nil?
-        raise StandardError.new('Error while parsing') if STRICT
+  def get_result
+    left, cmd, right = get_operation
+
+    if %w(AND OR LSHIFT RSHIFT).include?(cmd)
+      if left.nil? || right.nil?
+        fail StandardError.new('Error while parsing') if STRICT
         throw :do_later
       end
     end
-        
+
     result = case cmd
              when 'AND'
-                 left & right
+               left & right
              when 'OR'
-                 left | right
+               left | right
              when 'LSHIFT'
-                 left << right
+               left << right
              when 'RSHIFT'
-                 left >> right
+               left >> right
              when 'NOT'
                throw :do_later if right.nil?
-                 (~right)
+               (~right)
              when 'MOV'
                throw :do_later if left.nil?
-                 left
+               left
              end
-    
-    result = result % 65536
-    @opcodes << [cmd,left,right,result]
-    return result 
+
+    result = result % 65_536
+    @opcodes << [cmd, left, right, result]
+    result
   end
 
   def get_value
@@ -91,7 +91,7 @@ class LogicGateParser
       get_numeric
     end
   end
-  
+
   def get_numeric
     skip_whitespace
     @buffer.scan(REG_NUMERIC).to_i
@@ -100,13 +100,13 @@ class LogicGateParser
   def set_register(result)
     register = get_register
     @registers[register] = result unless
-	   @stuck.include? register
+     @stuck.include? register
   end
 
   def get_register_value
     @registers[get_register]
   end
-  
+
   def get_register
     skip_whitespace
     @buffer.scan(REG_REGISTER)
@@ -131,5 +131,3 @@ p.registers['b'] = part1
 p.stuck << 'b'
 p.run
 puts part2 = p.registers['a']
-
-
